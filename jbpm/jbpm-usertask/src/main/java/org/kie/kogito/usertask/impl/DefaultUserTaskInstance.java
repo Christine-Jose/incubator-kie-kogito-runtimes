@@ -45,6 +45,7 @@ import org.kie.kogito.usertask.UserTaskInstances;
 import org.kie.kogito.usertask.impl.model.DeadlineHelper;
 import org.kie.kogito.usertask.lifecycle.UserTaskLifeCycle;
 import org.kie.kogito.usertask.lifecycle.UserTaskState;
+import org.kie.kogito.usertask.lifecycle.UserTaskTransitionException;
 import org.kie.kogito.usertask.lifecycle.UserTaskTransitionToken;
 import org.kie.kogito.usertask.model.Attachment;
 import org.kie.kogito.usertask.model.Comment;
@@ -61,6 +62,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import static java.util.Collections.emptyMap;
 import static org.kie.kogito.jobs.descriptors.UserTaskInstanceJobDescription.newUserTaskInstanceJobDescriptionBuilder;
+import static org.kie.kogito.usertask.impl.lifecycle.DefaultUserTaskLifeCycle.CLAIM;
 import static org.kie.kogito.usertask.impl.lifecycle.DefaultUserTaskLifeCycle.WORKFLOW_ENGINE_USER;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
@@ -262,6 +264,9 @@ public class DefaultUserTaskInstance implements UserTaskInstance {
 
     @Override
     public void transition(String transitionId, Map<String, Object> data, IdentityProvider identity) {
+        if (CLAIM.equals(transitionId)) {
+            checkPermissionForExcludedUsers(this, identity);
+        }
         Optional<UserTaskTransitionToken> next = Optional.of(this.userTaskLifeCycle.newTransitionToken(transitionId, this, data));
         while (next.isPresent()) {
             UserTaskTransitionToken transition = next.get();
@@ -270,6 +275,17 @@ public class DefaultUserTaskInstance implements UserTaskInstance {
             this.userTaskEventSupport.fireOneUserTaskStateChange(this, transition.source(), transition.target());
         }
         this.updatePersistenceOrRemove();
+    }
+
+    private void checkPermissionForExcludedUsers(DefaultUserTaskInstance defaultUserTaskInstance, IdentityProvider identity) {
+        Set<String> excludedUsers = defaultUserTaskInstance.getExcludedUsers();
+        String user = identity.getName();
+        if (excludedUsers != null && !excludedUsers.isEmpty() && excludedUsers.contains(user)) {
+            String message = String.format(
+                    "User '%s' is not authorized to perform an operation on user task '%s'",
+                    user, defaultUserTaskInstance.getId());
+            throw new UserTaskTransitionException(message);
+        }
     }
 
     private void updatePersistence() {

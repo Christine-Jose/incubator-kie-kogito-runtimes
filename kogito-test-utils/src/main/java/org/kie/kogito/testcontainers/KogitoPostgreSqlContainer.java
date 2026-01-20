@@ -18,9 +18,6 @@
  */
 package org.kie.kogito.testcontainers;
 
-import java.text.MessageFormat;
-import java.util.function.Consumer;
-
 import org.kie.kogito.test.resources.TestResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,29 +61,50 @@ public class KogitoPostgreSqlContainer extends PostgreSQLContainer<KogitoPostgre
     }
 
     @Override
-    public void start() {
-        super.start();
-        LOGGER.info("PostgreSql server: {}", this.getContainerIpAddress() + ":" + this.getMappedPort(POSTGRESQL_PORT));
+    public String getResourceName() {
+        return "";
     }
 
     @Override
     public int getMappedPort() {
-        return getMappedPort(POSTGRESQL_PORT);
+        return 0;
     }
 
     @Override
-    public String getResourceName() {
-        return "postgresql";
+    public void stop() {
+
     }
 
-    public String getReactiveUrl() {
-        final String connectionTemplate = "postgresql://{0}:{1}@{2}:{3}/{4}?search_path={5}";
-        final String user = getUsername();
-        final String server = getHost();
-        final String secret = getPassword();
-        final String port = String.valueOf(getMappedPort());
-        final String database = getDatabaseName();
-        final String schema = "public";
-        return MessageFormat.format(connectionTemplate, user, secret, server, port, database, schema);
-    }
+    /*
+     * private Consumer<OutputFrame> getLogger() {
+     * return f -> System.out.print(f.getUtf8String());
+     * }
+     * 
+     * @Override
+     * public void start() {
+     * super.start();
+     * LOGGER.info("PostgreSql server: {}", this.getContainerIpAddress() + ":" + this.getMappedPort(POSTGRESQL_PORT));
+     * }
+     * 
+     * @Override
+     * public int getMappedPort() {
+     * return getMappedPort(POSTGRESQL_PORT);
+     * }
+     * 
+     * @Override
+     * public String getResourceName() {
+     * return "postgresql";
+     * }
+     * 
+     * public String getReactiveUrl() {
+     * final String connectionTemplate = "postgresql://{0}:{1}@{2}:{3}/{4}?search_path={5}";
+     * final String user = getUsername();
+     * final String server = getHost();
+     * final String secret = getPassword();
+     * final String port = String.valueOf(getMappedPort());
+     * final String database = getDatabaseName();
+     * final String schema = "public";
+     * return MessageFormat.format(connectionTemplate, user, secret, server, port, database, schema);
+     * }
+     */
 }

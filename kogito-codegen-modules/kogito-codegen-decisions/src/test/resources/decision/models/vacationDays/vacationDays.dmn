@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one
-  ~ or more contributor license agreements.  See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership.  The ASF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License.  You may obtain a copy of the License at
-  ~
-  ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
-<dmn:definitions xmlns:dmn="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns="decision" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" id="_9efe7fc6-f41b-422c-accd-95dcaaa67a39" name="Vacations" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="decision">
+<dmn:definitions xmlns:dmn="https://www.omg.org/spec/DMN/20240513/MODEL/" xmlns="decision" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20240513/FEEL/" id="_9efe7fc6-f41b-422c-accd-95dcaaa67a39" name="Vacations" typeLanguage="https://www.omg.org/spec/DMN/20240513/FEEL/" namespace="decision">
   <dmn:extensionElements />
   <dmn:itemDefinition id="_77BCBBC4-3599-49B2-9C72-EF94037F83FC" name="tAddress" isCollection="false">
     <dmn:itemComponent id="_2c4e3950-8304-4f47-b04a-3d440df9ef82" name="street" isCollection="false">
@@ -64,17 +46,6 @@
       <dmn:typeRef>tEmployee</dmn:typeRef>
     </dmn:itemComponent>
   </dmn:itemDefinition>
-  <dmn:decisionService id="_fcf22829-0fd8-4f41-919e-3e909f01fbff" name="days">
-    <dmn:extensionElements />
-    <dmn:variable id="_8ea3497e-8969-4aa6-9a39-254e4e8edea5" name="days" typeRef="Any" />
-    <dmn:outputDecision href="#_eac3ef9e-37de-4dca-8802-ee08ded9e268" />
-    <dmn:encapsulatedDecision href="#_5b8d18fb-39d8-4f5c-84a0-b79913b7aded" />
-    <dmn:inputData href="#_89e85ee4-f052-4977-bee5-a3b81a600c6c" />
-  </dmn:decisionService>
-  <dmn:inputData id="_89e85ee4-f052-4977-bee5-a3b81a600c6c" name="employee">
-    <dmn:extensionElements />
-    <dmn:variable id="_682874bf-b580-4a33-858d-7c1c4c8b9f3e" name="employee" />
-  </dmn:inputData>
   <dmn:decision id="_eac3ef9e-37de-4dca-8802-ee08ded9e268" name="vacationDays">
     <dmn:extensionElements />
     <dmn:variable id="_92a674f9-ebf5-4605-aa18-4731239cffe2" name="vacationDays" typeRef="number" />
@@ -153,6 +124,20 @@
       </dmn:contextEntry>
     </dmn:context>
   </dmn:decision>
+  <dmn:decision name="New Decision" id="_A20C593E-5EF9-48DC-824C-3AD2DA4AF7E8">
+    <dmn:variable name="New Decision" id="_B355664E-08AF-4366-B38F-B4C9B424F79A" />
+  </dmn:decision>
+  <dmn:inputData id="_89e85ee4-f052-4977-bee5-a3b81a600c6c" name="employee">
+    <dmn:extensionElements />
+    <dmn:variable id="_682874bf-b580-4a33-858d-7c1c4c8b9f3e" name="employee" />
+  </dmn:inputData>
+  <dmn:decisionService id="_fcf22829-0fd8-4f41-919e-3e909f01fbff" name="days">
+    <dmn:extensionElements />
+    <dmn:variable id="_8ea3497e-8969-4aa6-9a39-254e4e8edea5" name="days" typeRef="Any" />
+    <dmn:outputDecision href="#_eac3ef9e-37de-4dca-8802-ee08ded9e268" />
+    <dmn:encapsulatedDecision href="#_5b8d18fb-39d8-4f5c-84a0-b79913b7aded" />
+    <dmn:inputData href="#_89e85ee4-f052-4977-bee5-a3b81a600c6c" />
+  </dmn:decisionService>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="_AECB8363-7383-4A5B-8658-E9E975C387B1" name="DRG" useAlternativeInputDataShape="false">
       <di:extension>
@@ -204,6 +189,9 @@
         </dmndi:DMNStyle>
         <dc:Bounds x="160" y="220" width="153" height="60" />
         <dmndi:DMNLabel id="_FA24B2A3-C9B3-4B02-9AA2-C70F0848C62C" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="_57A2338A-F458-47D5-8C79-4A92DAEA335B" dmnElementRef="_A20C593E-5EF9-48DC-824C-3AD2DA4AF7E8" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="180" y="60" width="160" height="80" />
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="dmnedge-drg-_5e303927-d1c9-403c-a1b2-2af72044737d" dmnElementRef="_5e303927-d1c9-403c-a1b2-2af72044737d">
         <di:waypoint x="356.2379722595215" y="510" />

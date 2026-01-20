@@ -45,6 +45,7 @@ import org.kie.kogito.internal.process.workitem.KogitoWorkItemManager;
 import org.kie.kogito.internal.process.workitem.WorkItemTransition;
 import org.kie.kogito.process.workitems.impl.DefaultKogitoWorkItemHandler;
 import org.kogito.workitem.rest.auth.ApiKeyAuthDecorator;
+import org.kogito.workitem.rest.auth.ApiTokenConfig;
 import org.kogito.workitem.rest.auth.AuthDecorator;
 import org.kogito.workitem.rest.auth.BasicAuthDecorator;
 import org.kogito.workitem.rest.auth.BearerTokenAuthDecorator;
@@ -112,11 +113,13 @@ public class RestWorkItemHandler extends DefaultKogitoWorkItemHandler {
     protected final WebClient httpClient;
     protected final WebClient httpsClient;
     private Collection<RequestDecorator> requestDecorators;
+    private final ApiTokenConfig apiTokenConfig;
 
     public RestWorkItemHandler(WebClient httpClient, WebClient httpsClient) {
         this.httpClient = httpClient;
         this.httpsClient = httpsClient;
         this.requestDecorators = StreamSupport.stream(ServiceLoader.load(RequestDecorator.class).spliterator(), false).collect(Collectors.toList());
+        this.apiTokenConfig = ApiTokenConfig.getInstance();
     }
 
     @Override
@@ -185,6 +188,10 @@ public class RestWorkItemHandler extends DefaultKogitoWorkItemHandler {
         logger.debug("Invoking request with protocol {} host {} port {} and endpoint {}", protocol, host, port, path);
         WebClient client = isSsl ? httpsClient : httpClient;
         HttpRequest<Buffer> request = client.request(method, port, host, path);
+
+        // Apply API token authentication from properties file if configured
+        applyApiTokenAuthentication(request);
+
         requestDecorators.forEach(d -> d.decorate(workItem, parameters, request));
         authDecorators.forEach(d -> d.decorate(workItem, parameters, request));
         paramsDecorator.decorate(workItem, parameters, request);
@@ -257,6 +264,26 @@ public class RestWorkItemHandler extends DefaultKogitoWorkItemHandler {
         }
         logger.info("Cannot find definition for variable {}", varName);
         return null;
+    }
+
+    /**
+     * Apply API token authentication from properties file if configured.
+     * This method reads the API token from rest-workitem.properties and adds
+     * it to the request headers before execution.
+     *
+     * @param request The HTTP request to authenticate
+     */
+    private void applyApiTokenAuthentication(HttpRequest<Buffer> request) {
+        if (apiTokenConfig.isTokenConfigured()) {
+            String authValue = apiTokenConfig.getAuthorizationValue();
+            String headerName = apiTokenConfig.getTokenHeader();
+
+            logger.debug("Applying API token authentication with header: {}", headerName);
+            request.putHeader(headerName, authValue);
+            logger.info("API token authentication applied successfully");
+        } else {
+            logger.debug("No API token configured in properties file, skipping token authentication");
+        }
     }
 
 }
